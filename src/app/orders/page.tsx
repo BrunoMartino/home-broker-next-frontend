@@ -1,4 +1,4 @@
-import { Wallet } from "@/types";
+import { Order } from "@/types";
 import {
   Button,
   Table,
@@ -8,25 +8,27 @@ import {
   TableHeadCell,
   TableRow,
 } from "flowbite-react";
-import { AssetName } from "./components/AssetName";
+import { AssetName } from "../components/AssetName";
 
-export const getMyWallet = async (walletId: string): Promise<Wallet> => {
-  const response = await fetch(`http://localhost:3000/wallet/${walletId}`);
+export const getOrders = async (wallet_id: string): Promise<Order[]> => {
+  const response = await fetch(
+    `http://localhost:3000/orders?walletId=${wallet_id}`
+  );
   return response.json();
 };
 
-export default async function MyWalletListPage({
+export default async function OrdersListPage({
   searchParams,
 }: {
   searchParams: Promise<{ wallet_id: string }>;
 }) {
   const { wallet_id } = await searchParams;
-  const wallet = await getMyWallet(wallet_id);
-  console.log(wallet);
+  const orders = await getOrders(wallet_id);
+
   return (
     <div className="flex flex-col space-y-5">
       <article className="format">
-        <h1>Minha Carteira</h1>
+        <h1>Minhas Ordens</h1>
       </article>
       <div className="overflow-x-auto w-full flex-grow">
         <Table className="h-full max-h-full table-fixed">
@@ -36,27 +38,29 @@ export default async function MyWalletListPage({
                 Ativo
               </TableHeadCell>
               <TableHeadCell className="bg-slate-200 text-gray-700">
-                Cotação
+                Preço
               </TableHeadCell>
               <TableHeadCell className="bg-slate-200 text-gray-700">
                 Quantidade
               </TableHeadCell>
               <TableHeadCell className="bg-slate-200 text-gray-700">
-                Comprar/Vender
+                Tipo
+              </TableHeadCell>
+              <TableHeadCell className="bg-slate-200 text-gray-700">
+                Status
               </TableHeadCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {wallet.assets.map((walletAsset, key) => (
+            {orders.map((order, key) => (
               <TableRow key={key}>
                 <TableCell>
-                  <AssetName asset={walletAsset.asset} />
+                  <AssetName asset={order.asset} />
                 </TableCell>
-                <TableCell>R$ {walletAsset.asset.price}</TableCell>
-                <TableCell>{walletAsset.shares}</TableCell>
-                <TableCell>
-                  <Button color="light">Comprar / Vender</Button>
-                </TableCell>
+                <TableCell>R$ {order.price}</TableCell>
+                <TableCell>R$ {order.shares}</TableCell>
+                <TableCell>R$ {order.type}</TableCell>
+                <TableCell>R$ {order.status}</TableCell>
               </TableRow>
             ))}
           </TableBody>

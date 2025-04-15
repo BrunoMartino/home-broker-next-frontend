@@ -1,4 +1,4 @@
-import { Wallet } from "@/types";
+import { Asset } from "@/types";
 import {
   Button,
   Table,
@@ -8,25 +8,25 @@ import {
   TableHeadCell,
   TableRow,
 } from "flowbite-react";
-import { AssetName } from "./components/AssetName";
+import { AssetName } from "../components/AssetName";
 
-export const getMyWallet = async (walletId: string): Promise<Wallet> => {
-  const response = await fetch(`http://localhost:3000/wallet/${walletId}`);
+export const getAssets = async (): Promise<Asset[]> => {
+  const response = await fetch(`http://localhost:3000/assets`);
   return response.json();
 };
 
-export default async function MyWalletListPage({
+export default async function AssetsListPage({
   searchParams,
 }: {
   searchParams: Promise<{ wallet_id: string }>;
 }) {
   const { wallet_id } = await searchParams;
-  const wallet = await getMyWallet(wallet_id);
-  console.log(wallet);
+  const assets = await getAssets();
+
   return (
     <div className="flex flex-col space-y-5">
       <article className="format">
-        <h1>Minha Carteira</h1>
+        <h1>Ativos</h1>
       </article>
       <div className="overflow-x-auto w-full flex-grow">
         <Table className="h-full max-h-full table-fixed">
@@ -39,21 +39,17 @@ export default async function MyWalletListPage({
                 Cotação
               </TableHeadCell>
               <TableHeadCell className="bg-slate-200 text-gray-700">
-                Quantidade
-              </TableHeadCell>
-              <TableHeadCell className="bg-slate-200 text-gray-700">
                 Comprar/Vender
               </TableHeadCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {wallet.assets.map((walletAsset, key) => (
+            {assets.map((asset, key) => (
               <TableRow key={key}>
                 <TableCell>
-                  <AssetName asset={walletAsset.asset} />
+                  <AssetName asset={asset} />
                 </TableCell>
-                <TableCell>R$ {walletAsset.asset.price}</TableCell>
-                <TableCell>{walletAsset.shares}</TableCell>
+                <TableCell>R$ {asset.price}</TableCell>
                 <TableCell>
                   <Button color="light">Comprar / Vender</Button>
                 </TableCell>
