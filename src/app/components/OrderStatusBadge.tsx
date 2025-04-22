@@ -9,12 +9,15 @@ export const OrderStatusBadge = (props: { status: OrderStatus }) => {
     case OrderStatus.PENDING:
       color = "info";
       text = "Pendente";
+      break;
     case OrderStatus.OPEN:
       color = "warning";
       text = "Aberto";
+      break;
     case OrderStatus.CLOSE:
       color = "success";
       text = "Concluído";
+      break;
     case OrderStatus.FAILED:
       color = "failure";
       text = "Falhou";

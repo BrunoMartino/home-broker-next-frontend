@@ -9,6 +9,8 @@ import {
   TableRow,
 } from "flowbite-react";
 import { AssetName } from "../components/AssetName";
+import { OrderTypeBadge } from "../components/OrderTypeBadge";
+import { OrderStatusBadge } from "../components/OrderStatusBadge";
 
 export const getOrders = async (wallet_id: string): Promise<Order[]> => {
   const response = await fetch(
@@ -24,6 +26,7 @@ export default async function OrdersListPage({
 }) {
   const { wallet_id } = await searchParams;
   const orders = await getOrders(wallet_id);
+  console.log(orders);
 
   return (
     <div className="flex flex-col space-y-5">
@@ -59,8 +62,12 @@ export default async function OrdersListPage({
                 </TableCell>
                 <TableCell>R$ {order.price}</TableCell>
                 <TableCell>R$ {order.shares}</TableCell>
-                <TableCell>R$ {order.type}</TableCell>
-                <TableCell>R$ {order.status}</TableCell>
+                <TableCell>
+                  <OrderTypeBadge type={order.type} />
+                </TableCell>
+                <TableCell>
+                  <OrderStatusBadge status={order.status} />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

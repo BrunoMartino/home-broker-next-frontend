@@ -4,7 +4,7 @@ import { Badge } from "flowbite-react";
 export const OrderTypeBadge = (props: { type: OrderType }) => {
   return (
     <Badge
-      color={props.type === OrderType.BUY ? "blue" : "red"}
+      color={props.type === OrderType.BUY ? "blue" : "green"}
       className="w-fit"
     >
       {props.type === OrderType.BUY ? "Compra" : "Venda"}
