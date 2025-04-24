@@ -1,4 +1,3 @@
-import { Order } from "@/types";
 import {
   Button,
   Table,
@@ -11,13 +10,8 @@ import {
 import { AssetName } from "../components/AssetName";
 import { OrderTypeBadge } from "../components/OrderTypeBadge";
 import { OrderStatusBadge } from "../components/OrderStatusBadge";
-
-export const getOrders = async (wallet_id: string): Promise<Order[]> => {
-  const response = await fetch(
-    `http://localhost:3000/orders?walletId=${wallet_id}`
-  );
-  return response.json();
-};
+import { getAssets, getMyWallet, getOrders } from "@/queries/queries";
+import { WalletList } from "../components/WalletList";
 
 export default async function OrdersListPage({
   searchParams,
@@ -25,8 +19,14 @@ export default async function OrdersListPage({
   searchParams: Promise<{ wallet_id: string }>;
 }) {
   const { wallet_id } = await searchParams;
+
+  if (!wallet_id) return <WalletList />;
+
+  const wallet = await getMyWallet(wallet_id);
+
+  if (!wallet) return <WalletList />;
+
   const orders = await getOrders(wallet_id);
-  console.log(orders);
 
   return (
     <div className="flex flex-col space-y-5">

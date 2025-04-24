@@ -1,19 +1,26 @@
 import { AssetName } from "@/app/components/AssetName";
 import { OrderForm } from "@/app/components/OrderForm";
-import { Asset } from "@/types";
+import { OrderType } from "@/types";
 import { Card, TabItem, Tabs } from "flowbite-react";
-
-export const getAsset = async (symbol: string): Promise<Asset> => {
-  const response = await fetch(`http://localhost:3000/assets/${symbol}`);
-  return response.json();
-};
+import { AssetChartComponent } from "./AssetChartComponet";
+import { getAsset, getMyWallet } from "@/queries/queries";
+import { WalletList } from "@/app/components/WalletList";
 
 export default async function AssetDashboard({
   params,
+  searchParams,
 }: {
   params: Promise<{ assetSymbol: string }>;
+  searchParams: Promise<{ wallet_id: string }>;
 }) {
   const { assetSymbol } = await params;
+  const { wallet_id } = await searchParams;
+
+  if (!wallet_id) return <WalletList />;
+
+  const wallet = await getMyWallet(wallet_id);
+
+  if (!wallet) return <WalletList />;
 
   const asset = await getAsset(assetSymbol);
   return (
@@ -30,16 +37,28 @@ export default async function AssetDashboard({
                 active
                 title={<div className="text-blue-700">Comprar</div>}
               >
-                <OrderForm />
+                <OrderForm
+                  asset={asset}
+                  wallet_id={wallet_id}
+                  type={OrderType.BUY}
+                />
               </TabItem>
               <TabItem
                 active
                 title={<div className="text-green-700">Venda</div>}
-              ></TabItem>
+              >
+                <OrderForm
+                  asset={asset}
+                  wallet_id={wallet_id}
+                  type={OrderType.SELL}
+                />
+              </TabItem>
             </Tabs>
           </Card>
         </div>
-        <div className="col-span-3 flex flex-grow"></div>
+        <div className="col-span-3 flex flex-grow">
+          <AssetChartComponent asset={asset} />
+        </div>
       </div>
     </div>
   );
